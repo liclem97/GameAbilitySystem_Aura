@@ -11,9 +11,7 @@
 UAuraAttributeSet::UAuraAttributeSet()
 {
 	InitHealth(50.f);
-	InitMaxHealth(100.f);
 	InitMana(25.f);
-	InitMaxMana(50.f);
 }
 
 void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -40,8 +38,7 @@ void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 
 	// Vital Attributes
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Health, COND_None, REPNOTIFY_Always);	
-	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Mana, COND_None, REPNOTIFY_Always);
-	
+	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, Mana, COND_None, REPNOTIFY_Always);	
 }
 
 // 설정한 Attribute 값이 바뀌기 전 동작하는 함수.
