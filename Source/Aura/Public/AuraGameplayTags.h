@@ -6,7 +6,7 @@
 #include "GameplayTagContainer.h"
 
 /**
- *  AuraGameplayTags
+ * AuraGameplayTags
  * 
  * Singleton containing native Gameplay Tags
  */
