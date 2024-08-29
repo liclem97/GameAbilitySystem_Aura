@@ -24,7 +24,7 @@ void UTargetDataUnderMouse::Activate()
 		const FGameplayAbilitySpecHandle SpecHandle = GetAbilitySpecHandle();
 		const FPredictionKey ActivationPredictionKey = GetActivationPredictionKey();
 		
-		// 서버로부터 타겟 데이터가 복제될 때 호출될 델리게이트 바인딩
+		// 클라이언트 -> 서버로 타겟 데이터가 복제될 때 호출될 델리게이트 바인딩
 		AbilitySystemComponent.Get()->AbilityTargetDataSetDelegate(SpecHandle, ActivationPredictionKey).AddUObject(this, &UTargetDataUnderMouse::OnTargetDataReplicatedCallback);
 		
 		// 타겟 데이터가 이미 복제되어있는지 확인, 복제된 데이터가 있다면 델리게이트 즉시 호출
