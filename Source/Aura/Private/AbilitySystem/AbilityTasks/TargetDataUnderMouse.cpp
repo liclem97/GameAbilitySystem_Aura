@@ -19,12 +19,22 @@ void UTargetDataUnderMouse::Activate()
 		// 로컬에서 제어 중이라면 마우스 커서 데이터를 서버로 전송한다.
 		SendMouseCursorData();
 	}
-	else
+	else // 서버에서 실행 중일 때
 	{
-		// TODO : We are on the server, so listen for target data.
+		const FGameplayAbilitySpecHandle SpecHandle = GetAbilitySpecHandle();
+		const FPredictionKey ActivationPredictionKey = GetActivationPredictionKey();
+		
+		// 서버로부터 타겟 데이터가 복제될 때 호출될 델리게이트 바인딩
+		AbilitySystemComponent.Get()->AbilityTargetDataSetDelegate(SpecHandle, ActivationPredictionKey).AddUObject(this, &UTargetDataUnderMouse::OnTargetDataReplicatedCallback);
+		
+		// 타겟 데이터가 이미 복제되어있는지 확인, 복제된 데이터가 있다면 델리게이트 즉시 호출
+		const bool bCalledDelegate = AbilitySystemComponent.Get()->CallReplicatedTargetDataDelegatesIfSet(SpecHandle, ActivationPredictionKey);
+		if (!bCalledDelegate)
+		{	
+			// 타겟 데이터가 아직 설정되지 않았다면, 원격 플레이어의 데이터를 기다리는 상태로 전환.
+			SetWaitingOnRemotePlayerData();
+		}
 	}
-
-
 }
 
 /* 클라이언트인 경우 타겟 데이터를 서버로 보낸다. */
@@ -55,6 +65,17 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 		AbilitySystemComponent->ScopedPredictionKey);  // 예측 키를 범위에 설정
 
 	// AbilityTaskDelegates를 브로드캐스트해야 하는 경우 유효한 데이터를 브로드캐스트.
+	if (ShouldBroadcastAbilityTaskDelegates())
+	{
+		ValidData.Broadcast(DataHandle);
+	}
+}
+
+void UTargetDataUnderMouse::OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle& DataHandle, FGameplayTag ActivationTag)
+{	
+	// 클라이언트에서 복제된 타겟 데이터를 소비한다.
+	// 클라이언트가 서버로 보낸 타겟 데이터를 서버에서 처리하고, 더 이상 사용되지 않도록 제거한다.
+	AbilitySystemComponent->ConsumeClientReplicatedTargetData(GetAbilitySpecHandle(), GetActivationPredictionKey());
 	if (ShouldBroadcastAbilityTaskDelegates())
 	{
 		ValidData.Broadcast(DataHandle);
