@@ -28,6 +28,7 @@ void AAuraEnemy::BeginPlay()
 	Super::BeginPlay();
 	InitAbilityActorInfo();
 
+	/* HealthBar */
 	if (UAuraUserWidget* AuraUserWidget = Cast<UAuraUserWidget>(HealthBar->GetUserWidgetObject()))
 	{
 		AuraUserWidget->SetWidgetController(this);
@@ -51,6 +52,7 @@ void AAuraEnemy::BeginPlay()
 		OnHealthChanged.Broadcast(AuraAS->GetHealth());
 		OnMaxHealthChanged.Broadcast(AuraAS->GetMaxHealth());
 	}
+	/* HealthBar End */
 }
 
 void AAuraEnemy::InitAbilityActorInfo()
