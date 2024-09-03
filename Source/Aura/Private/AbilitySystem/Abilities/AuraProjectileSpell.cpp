@@ -52,7 +52,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 
 		// 데미지 값을 설정하여 태그와 함께 발사체에 적용.
 		const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
-		const float ScaledDamge = Damage.GetValueAtLevel(GetAbilityLevel());
+		const float ScaledDamge = Damage.GetValueAtLevel(10);
 
 		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, FString::Printf(TEXT("FireBolt Damage : %f"), ScaledDamge));
 
