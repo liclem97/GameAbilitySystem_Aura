@@ -72,3 +72,23 @@ void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* World
 	const FGameplayEffectSpecHandle VitalAttributesSpecHandle = ASC->MakeOutgoingSpec(CharacterClassInfo->VitalAttributes, Level, VitalAttributeContextHandle);
 	ASC->ApplyGameplayEffectSpecToSelf(*VitalAttributesSpecHandle.Data.Get());
 }
+
+/* 시작 시 기본 어빌리티를 부여한다. */
+void UAuraAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC)
+{
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if (AuraGameMode == nullptr) return;
+
+	// 게임모드에 설정된 캐릭터 클래스 정보를 가져옴.
+	UCharacterClassInfo* CharacterClassInfo = AuraGameMode->CharacterClassInfo;
+
+	// DA_CharacterClassInfo에 설정된 CommonAbilities 만큼 반복.
+	for (TSubclassOf<UGameplayAbility> AbilityClass : CharacterClassInfo->CommonAbilities)
+	{	
+		//FGameplayAbilitySpec을 생성하고 레벨 1로 설정.
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
+
+		// 생성된 AbilitySpec을 AbilitySystemComponent에 부여.
+		ASC->GiveAbility(AbilitySpec);
+	}
+}
