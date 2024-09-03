@@ -121,4 +121,9 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName("Damage"),
 		FString("Damage")
 	);
+
+	GameplayTags.Effect_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Effect_HitReact"),
+		FString("Tag granted when Hit Reacting")
+	);
 }

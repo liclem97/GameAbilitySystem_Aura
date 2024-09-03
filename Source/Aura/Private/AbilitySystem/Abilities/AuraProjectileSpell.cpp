@@ -51,10 +51,10 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceASC->MakeEffectContext());
 
 		// 데미지 값을 설정하여 태그와 함께 발사체에 적용.
-		FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+		const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
 		const float ScaledDamge = Damage.GetValueAtLevel(GetAbilityLevel());
 
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, FString::Printf(TEXT("FireBolt Damage : %f"), ScaledDamge));
+		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, FString::Printf(TEXT("FireBolt Damage : %f"), ScaledDamge));
 
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTags.Damage, ScaledDamge);
 		Projectile->DamageEffectSpecHandle = SpecHandle;
