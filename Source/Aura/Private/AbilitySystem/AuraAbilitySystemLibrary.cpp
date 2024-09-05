@@ -44,12 +44,9 @@ UAttributeMenuWidgetController* UAuraAbilitySystemLibrary::GetAttributeMenuWidge
 
 void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC)
 {
-	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
-	if (AuraGameMode == nullptr) return;
-
 	AActor* AvatarActor = ASC->GetAvatarActor();
 
-	UCharacterClassInfo* CharacterClassInfo = AuraGameMode->CharacterClassInfo;
+	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
 	FCharacterClassDefaultInfo ClassDefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
 	
 	/**
@@ -76,11 +73,8 @@ void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* World
 /* 시작 시 기본 어빌리티를 부여한다. */
 void UAuraAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC)
 {
-	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
-	if (AuraGameMode == nullptr) return;
-
 	// 게임모드에 설정된 캐릭터 클래스 정보를 가져옴.
-	UCharacterClassInfo* CharacterClassInfo = AuraGameMode->CharacterClassInfo;
+	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
 
 	// DA_CharacterClassInfo에 설정된 CommonAbilities 만큼 반복.
 	for (TSubclassOf<UGameplayAbility> AbilityClass : CharacterClassInfo->CommonAbilities)
@@ -91,4 +85,11 @@ void UAuraAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContext
 		// 생성된 AbilitySpec을 AbilitySystemComponent에 부여.
 		ASC->GiveAbility(AbilitySpec);
 	}
+}
+
+UCharacterClassInfo* UAuraAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
+{
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if (AuraGameMode == nullptr) return nullptr;
+	return AuraGameMode->CharacterClassInfo;
 }
