@@ -175,6 +175,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				// 타겟 ASC에 Effect_HitReact가 있으면 Gameplay Ability 활성화. GA_HitReact
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
+			// 데미지 텍스트를 띄움.
 			ShowFloatingText(Props, LocalIncomingDamage);
 		}
 	}
