@@ -18,7 +18,20 @@ public:
 	/** 직렬화에 사용된 실제 구조를 반환합니다. 하위 클래스는 이 구조를 재정의해야 합니다! */
 	virtual UScriptStruct* GetScriptStruct() const
 	{
-		return FGameplayEffectContext::StaticStruct();
+		return StaticStruct();
+	}
+
+	/** 이 컨텍스트의 복사본을 생성하여 나중에 수정할 수 있도록 합니다. */
+	virtual FAuraGameplayEffectContext* Duplicate() const
+	{
+		FAuraGameplayEffectContext* NewContext = new FAuraGameplayEffectContext();
+		*NewContext = *this;
+		if (GetHitResult())
+		{
+			// Does a deep copy of the hit result
+			NewContext->AddHitResult(*GetHitResult(), true);
+		}
+		return NewContext;
 	}
 
 	/** 사용자 지정 직렬화, 하위 클래스는 이를 재정의해야 합니다 */
@@ -31,4 +44,18 @@ protected:
 	UPROPERTY()
 	bool bIsCriticalHit = false;
 
+};
+
+/** 이 템플릿은 특정 구조체에 대해 네트워크 직렬화와 복사 가능 여부와 같은 특성들을 명시합니다.
+* 1. 네트워크 직렬화 가능 (WithNetSerializer = true): 이 구조체는 네트워크를 통해 직렬화 및 전송이 가능합니다.
+* 2. 복사 가능 (WithCopy = true): 이 구조체는 복사 생성자를 통해 복사할 수 있습니다.
+*/
+template<>
+struct TStructOpsTypeTraits<FAuraGameplayEffectContext> : TStructOpsTypeTraitsBase2<FAuraGameplayEffectContext>
+{
+	enum
+	{
+		WithNetSerializer = true,
+		WithCopy = true		
+	};
 };
