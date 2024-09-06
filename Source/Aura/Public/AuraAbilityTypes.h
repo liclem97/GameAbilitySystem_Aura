@@ -34,7 +34,7 @@ public:
 		return NewContext;
 	}
 
-	/** 사용자 지정 직렬화, 하위 클래스는 이를 재정의해야 합니다 */
+	/** 사용자 지정 직렬화, 하위 클래스는 이를 재정의해야 합니다. */
 	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess);
 
 protected:
