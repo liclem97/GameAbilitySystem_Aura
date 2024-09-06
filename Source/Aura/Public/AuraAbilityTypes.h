@@ -31,5 +31,4 @@ protected:
 	UPROPERTY()
 	bool bIsCriticalHit = false;
 
-
 };
