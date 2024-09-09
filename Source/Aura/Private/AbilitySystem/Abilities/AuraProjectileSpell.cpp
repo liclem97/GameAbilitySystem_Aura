@@ -31,7 +31,6 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		// 발사체의 소환 위치, 회전값 설정
 		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
 		FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
-		Rotation.Pitch = 0.f; // 발사체가 수평으로 발사되도록 설정.
 
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(SocketLocation);
