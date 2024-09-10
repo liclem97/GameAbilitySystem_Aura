@@ -41,9 +41,10 @@ void AAuraEnemy::PossessedBy(AController* NewController)
 	// AI는 서버에서만 존재할 수 있음.
 	if (!HasAuthority()) return;
 	AuraAIController = Cast<AAuraAIController>(NewController);
-
 	AuraAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 	AuraAIController->RunBehaviorTree(BehaviorTree);
+	AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), false);
+	AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangedAttacker"), CharacterClass != ECharacterClass::Warrior);
 }
 
 void AAuraEnemy::BeginPlay()
@@ -92,6 +93,7 @@ void AAuraEnemy::HitReactChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
 	bHitReacting = NewCount > 0;
 	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
+	AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), bHitReacting);
 }
 
 void AAuraEnemy::InitAbilityActorInfo()
