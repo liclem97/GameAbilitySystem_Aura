@@ -29,7 +29,8 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	if (CombatInterface)
 	{	
 		// 발사체의 소환 위치, 회전값 설정
-		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
+		// BlueprintNative 추가로 인한 Execute_GetCombatSocketLocation().
+		const FVector SocketLocation =  ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo());
 		FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 
 		FTransform SpawnTransform;
