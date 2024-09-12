@@ -55,7 +55,7 @@ void AAuraEnemy::BeginPlay()
 	if (HasAuthority())
 	{
 		// Enemy에게 DA_CharacterClassInfo의 CommonAbilities를 부여.
-		UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+		UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent, CharacterClass);
 	}
 
 	if (UAuraUserWidget* AuraUserWidget = Cast<UAuraUserWidget>(HealthBar->GetUserWidgetObject()))
