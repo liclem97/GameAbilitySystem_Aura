@@ -18,7 +18,7 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 }
 
 /* 발사체 소환 함수 */
-void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag)
+void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride)
 {	
 	// 서버가 아닐시 리턴.
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
@@ -34,10 +34,14 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 			GetAvatarActorFromActorInfo(),
 			SocketTag);
 		FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+		if (bOverridePitch)
+		{
+			Rotation.Pitch = PitchOverride;
+		}
 
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(SocketLocation);
-		SpawnTransform.SetRotation(Rotation.Quaternion());
+		SpawnTransform.SetRotation(Rotation.Quaternion());		
 
 		// 소환된 발사체의 상세 스펙 지정을 위한 지연된 스폰.
 		AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
