@@ -16,6 +16,7 @@ TArray<FVector> UAuraSummonAbility::GetSpawnLocation()
 		const FVector Direction = LeftOfSpread.RotateAngleAxis(DeltaSpread * i, FVector::UpVector);
 		FVector ChosenSpawnLocation = Location + Direction * FMath::FRandRange(MinSpawnDistance, MaxSpawnDistance);
 
+		// 소환자 Z -400 ~ 400 기준으로 라인 트레이스 후 닿은 ImpactPoint를 소환 위치로 잡음.
 		FHitResult Hit;
 		GetWorld()->LineTraceSingleByChannel(Hit, ChosenSpawnLocation + FVector(0.f, 0.f, 400.f), ChosenSpawnLocation - FVector(0.f, 0.f, 400.f), ECC_Visibility);
 		if (Hit.bBlockingHit)
@@ -26,4 +27,10 @@ TArray<FVector> UAuraSummonAbility::GetSpawnLocation()
 	}
 
 	return SpawnLocations;
+}
+
+TSubclassOf<APawn> UAuraSummonAbility::GetRandomMinionClass()
+{
+	int32 Selection = FMath::RandRange(0, MinionClasses.Num() - 1);
+	return MinionClasses[Selection];
 }
