@@ -5,6 +5,7 @@
 
 #include "AbilitySystem/Abilities/AuraGameplayAbility.h"
 #include "AuraGameplayTags.h"
+#include "AuraLogChannels.h"
 
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 {
@@ -60,6 +61,58 @@ void UAuraAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& In
 			AbilitySpecInputReleased(AbilitySpec);
 		}
 	}
+}
+
+// 각 활성화 가능한 능력에 대해 제공된 델리게이트를 실행하는 함수.
+// 만약 델리게이트 실행에 실패하면 에러 로그를 출력.
+void UAuraAbilitySystemComponent::ForEachAbility(const FForEachAbility& Delegate)
+{	
+	// 활성화 가능한 능력 목록을 안전하게 잠그고 접근하기 위한 범위 잠금.
+	FScopedAbilityListLock ActiveScopeLock(*this);
+
+	// 각 능력에 대해 델리게이트를 실행.
+	for (const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{	
+		// 델리게이트가 바인딩되어 있다면 실행. 실패 시 로그 출력.
+		if (!Delegate.ExecuteIfBound(AbilitySpec))
+		{
+			UE_LOG(LogAura, Error, TEXT("Failed to execute delegate in %hs"), __FUNCTION__);
+		}
+	}
+}
+
+// 주어진 능력 사양에서 "Abilities" 태그를 반환하는 함수.
+// 능력 사양에 속한 태그 중 "Abilities" 태그가 있는지 확인하여 반환.
+FGameplayTag UAuraAbilitySystemComponent::GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec)
+{	
+	// 능력 사양에 능력이 존재하는지 확인.
+	if (AbilitySpec.Ability)
+	{	
+		// 능력 태그 목록을 순회하며 "Abilities" 태그를 찾음.
+		for (FGameplayTag Tag : AbilitySpec.Ability.Get()->AbilityTags)
+		{
+			if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Abilities"))))
+			{
+				return Tag; // "Abilities" 태그를 찾으면 반환.
+			}
+		}
+	}
+	return FGameplayTag();
+}
+
+// 주어진 능력 사양에서 "InputTag" 태그를 반환하는 함수.
+// 동적 능력 태그 목록에서 "InputTag" 태그를 확인하여 반환.
+FGameplayTag UAuraAbilitySystemComponent::GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec)
+{	
+	// 동적 능력 태그 목록을 순회하며 "InputTag" 태그를 찾음.
+	for (FGameplayTag Tag : AbilitySpec.DynamicAbilityTags)
+	{
+		if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("InputTag"))))
+		{
+			return Tag; // "InputTag" 태그를 찾으면 반환.
+		}
+	}
+	return FGameplayTag();
 }
 
 void UAuraAbilitySystemComponent::ClientEffectApplied_Implementation(UAbilitySystemComponent* AbilitySystemComponent,
