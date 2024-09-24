@@ -27,6 +27,7 @@ struct FUIWidgetRow : public FTableRowBase
 
 struct FOnAttributeChangeData;
 class UAbilityInfo;
+class UAuraAbilitySystemComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
@@ -93,6 +94,8 @@ protected:
 	// 태그를 기준으로 데이터 테이블의 행을 가져오는 템플릿 함수
 	template<typename T>
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
+
+	void OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraAbilitySystemComponent);
 };
 
 template<typename T>
