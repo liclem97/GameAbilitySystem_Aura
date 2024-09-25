@@ -43,5 +43,5 @@ float UMMC_MaxMana::CalculateBaseMagnitude_Implementation(const FGameplayEffectS
 	const int32 PlayerLevel = CombatInterface->GetPlayerLevel();
 
 	// 최대 체력 값을 계산하여 반환. 기본값 50 + Intelligence에 따른 증가 + 플레이어 레벨에 따른 증가.
-	return 50.f + 2.f * Int + 15.f * PlayerLevel;
+	return 50.f + 2.5f * Int + 15.f * PlayerLevel;
 }
