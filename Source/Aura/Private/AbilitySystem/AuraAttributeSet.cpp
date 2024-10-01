@@ -181,7 +181,8 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				if (CombatInterface)
 				{
 					CombatInterface->Die();
-				}				
+				}	
+				SendXPEvent(Props);
 			}
 			else // 죽지 않았을 때 실행.
 			{
@@ -204,7 +205,32 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		const float LocalIncomingXP = GetIncomingXP();
 		SetIncomingXP(0.f);
 
-		UE_LOG(LogAura, Display, TEXT("IncomingXP :%f"), LocalIncomingXP);
+		
+	}
+}
+
+void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
+{	
+	// 타겟 캐릭터가 CombatInterface를 구현하고 있는지 확인하고 캐스팅.
+	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetCharacter))
+	{	
+		// 타겟 캐릭터의 레벨과 클래스를 가져옴.
+		const int32 TargetLevel = CombatInterface->GetPlayerLevel();
+		const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(Props.TargetCharacter);
+
+		// 타겟 캐릭터의 정보를 기반으로 XPReward를 가져옴.
+		const int32 XPReward = UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(Props.TargetCharacter, TargetClass, TargetLevel);
+		
+		// GameplayTags에서 XP 관련 태그를 가져옴.
+		const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+
+		// Gameplay Event에 사용될 데이터(Payload)를 설정.
+		FGameplayEventData Payload;
+		Payload.EventTag = GameplayTags.Attributes_Meta_IncomingXP;
+		Payload.EventMagnitude = XPReward;
+
+		// 소스 캐릭터에게 XP 이벤트 전송.
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceCharacter, GameplayTags.Attributes_Meta_IncomingXP, Payload);
 	}
 }
 
@@ -228,7 +254,6 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float D
 		}
 	}
 }
-
 
 void UAuraAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
 {
