@@ -206,7 +206,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		const float LocalIncomingXP = GetIncomingXP();
 		SetIncomingXP(0.f);
 
-		//TODO : 레벨업을 해야 함.
+		//TODO : 레벨업을 해야할 때
 		if (Props.SourceCharacter->Implements<UPlayerInterface>())
 		{
 			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);
