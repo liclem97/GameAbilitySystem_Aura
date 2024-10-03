@@ -217,10 +217,10 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
 {	
 	// 타겟 캐릭터가 CombatInterface를 구현하고 있는지 확인하고 캐스팅.
-	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetCharacter))
+	if (Props.TargetCharacter->Implements<UCombatInterface>())
 	{	
 		// 타겟 캐릭터의 레벨과 클래스를 가져옴.
-		const int32 TargetLevel = CombatInterface->GetPlayerLevel();
+		const int32 TargetLevel = ICombatInterface::Execute_GetPlayerLevel(Props.TargetCharacter);
 		const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(Props.TargetCharacter);
 
 		// 타겟 캐릭터의 정보를 기반으로 XPReward를 가져옴.
