@@ -37,12 +37,9 @@ void UAuraWidgetController::BroadcastAbilityInfo()
 		{
 			// 능력 태그를 통해 해당 능력 정보를 가져옴.
 			FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AuraAbilitySystemComponent->GetAbilityTagFromSpec(AbilitySpec));
-
-			// 능력에 대한 입력 태그를 설정.
-			Info.InputTag = AuraAbilitySystemComponent->GetInputTagFromSpec(AbilitySpec);
-
-			// 능력 정보를 AbilityInfoDelegate로 브로드캐스트.
-			AbilityInfoDelegate.Broadcast(Info);
+			Info.InputTag = AuraAbilitySystemComponent->GetInputTagFromSpec(AbilitySpec);	// 능력에 대한 입력 태그를 설정.
+			Info.StatusTag = AuraAbilitySystemComponent->GetStatusFromSpec(AbilitySpec);	// 능력에 대한 스테이터스 태그 설정.
+			AbilityInfoDelegate.Broadcast(Info);	// 능력 정보를 AbilityInfoDelegate로 브로드캐스트.
 		}
 	);
 	// 모든 활성화된 능력에 대해 델리게이트 실행.
