@@ -192,9 +192,9 @@ void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 	// 능력 정보 배열을 순회하면서 각 능력의 상태를 업데이트.
 	for (const FAuraAbilityInfo& Info : AbilityInfo->AbilityInformation)
 	{
-		if (Info.AbilityTag.IsValid()) continue; // 능력 태그가 유효하지 않으면 건너뜀.
-		if (Level < Info.LevelRequirement) continue; 	// 플레이어 레벨이 요구 레벨보다 낮으면 건너뜀.
-		if (GetSpecFromAbilityTag(Info.AbilityTag) == nullptr) // 해당 태그의 능력이 없으면 새로 추가.
+		if (!Info.AbilityTag.IsValid()) continue;	// 능력 태그가 유효하지 않으면 건너뜀.
+		if (Level < Info.LevelRequirement) continue;	// 플레이어 레벨이 요구 레벨보다 낮으면 건너뜀.
+		if (GetSpecFromAbilityTag(Info.AbilityTag) == nullptr)	// 해당 태그의 능력이 없으면 새로 추가.
 		{
 			// 능력 사양을 만들고 상태 태그를 추가.
 			FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Info.Ability, 1);
@@ -203,6 +203,7 @@ void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 			// 능력을 부여하고 사양을 더럽힘(갱신).
 			GiveAbility(AbilitySpec);
 			MarkAbilitySpecDirty(AbilitySpec);
+			ClientUpdateAbilityStatus(Info.AbilityTag, FAuraGameplayTags::Get().Abilities_Status_Eligible);
 		}
 	}
 }
@@ -216,6 +217,11 @@ void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
 		bStartupAbilitiesGiven = true;
 		AbilitiesGivenDelegate.Broadcast();
 	}	
+}
+
+void UAuraAbilitySystemComponent::ClientUpdateAbilityStatus_Implementation(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag)
+{
+	AbilityStatusChanged.Broadcast(AbilityTag, StatusTag);
 }
 
 void UAuraAbilitySystemComponent::ClientEffectApplied_Implementation(UAbilitySystemComponent* AbilitySystemComponent,
