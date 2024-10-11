@@ -4,6 +4,8 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 
 #include "AbilitySystem/Abilities/AuraGameplayAbility.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "AbilitySystem/Data/AbilityInfo.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AuraGameplayTags.h"
 #include "AuraLogChannels.h"
@@ -142,6 +144,22 @@ FGameplayTag UAuraAbilitySystemComponent::GetStatusFromSpec(const FGameplayAbili
 	return FGameplayTag();
 }
 
+FGameplayAbilitySpec* UAuraAbilitySystemComponent::GetSpecFromAbilityTag(const FGameplayTag& AbilityTag)
+{
+	FScopedAbilityListLock ActiveScopeLoc(*this);
+	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+		for (FGameplayTag Tag : AbilitySpec.Ability.Get()->AbilityTags)
+		{
+			if (Tag.MatchesTag(AbilityTag))
+			{
+				return &AbilitySpec;
+			}
+		}
+	}
+	return nullptr;
+}
+
 void UAuraAbilitySystemComponent::UpgradeAttribute(const FGameplayTag& AttributeTag)
 {	
 	if (GetAvatarActor()->Implements<UPlayerInterface>())
@@ -163,6 +181,29 @@ void UAuraAbilitySystemComponent::ServerUpgradeAttributes_Implementation(const F
 	if (GetAvatarActor()->Implements<UPlayerInterface>())
 	{
 		IPlayerInterface::Execute_AddToAttributePoints(GetAvatarActor(), -1);
+	}
+}
+
+void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
+{
+	// 현재 아바타의 능력 정보(AbilityInfo)를 가져옴.
+	UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
+
+	// 능력 정보 배열을 순회하면서 각 능력의 상태를 업데이트.
+	for (const FAuraAbilityInfo& Info : AbilityInfo->AbilityInformation)
+	{
+		if (Info.AbilityTag.IsValid()) continue; // 능력 태그가 유효하지 않으면 건너뜀.
+		if (Level < Info.LevelRequirement) continue; 	// 플레이어 레벨이 요구 레벨보다 낮으면 건너뜀.
+		if (GetSpecFromAbilityTag(Info.AbilityTag) == nullptr) // 해당 태그의 능력이 없으면 새로 추가.
+		{
+			// 능력 사양을 만들고 상태 태그를 추가.
+			FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Info.Ability, 1);
+			AbilitySpec.DynamicAbilityTags.AddTag(FAuraGameplayTags::Get().Abilities_Status_Eligible);
+
+			// 능력을 부여하고 사양을 더럽힘(갱신).
+			GiveAbility(AbilitySpec);
+			MarkAbilitySpecDirty(AbilitySpec);
+		}
 	}
 }
 
