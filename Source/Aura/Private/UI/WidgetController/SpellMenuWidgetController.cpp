@@ -17,7 +17,20 @@ void USpellMenuWidgetController::BroadcastInitialValues()
 void USpellMenuWidgetController::BindCallbacksToDependencies()
 {
 	GetAuraASC()->AbilityStatusChanged.AddLambda([this](const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag)
-		{
+		{	
+			// 어빌리티 버튼 클릭 중 스탯이 변경되면 버튼이 바로 활성화.
+			if (SelectedAbility.Ability.MatchesTagExact(AbilityTag))
+			{
+				SelectedAbility.Status = StatusTag;
+				// 버튼 활성화 여부 결정.
+				bool bEnableSpendPoints = false;
+				bool bEnableEquip = false;
+				ShouldEnabledButtons(StatusTag, CurrentSpellPoints, bEnableSpendPoints, bEnableEquip);
+
+				// 선택된 글로브의 버튼 상태를 브로드캐스트.
+				SpellGlobeSelectedDelegate.Broadcast(bEnableSpendPoints, bEnableEquip);
+			}
+
 			if (AbilityInfo)
 			{
 				FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
@@ -29,6 +42,15 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 	GetAuraPS()->OnSpellPointsChangedDelegate.AddLambda([this](int32 SpellPoints) 
 		{
 			SpellPointsChanged.Broadcast(SpellPoints);
+			CurrentSpellPoints = SpellPoints;
+
+			// 버튼 활성화 여부 결정.
+			bool bEnableSpendPoints = false;
+			bool bEnableEquip = false;
+			ShouldEnabledButtons(SelectedAbility.Status, CurrentSpellPoints, bEnableSpendPoints, bEnableEquip);
+
+			// 선택된 글로브의 버튼 상태를 브로드캐스트.
+			SpellGlobeSelectedDelegate.Broadcast(bEnableSpendPoints, bEnableEquip);
 		});
 }
 
@@ -55,6 +77,9 @@ void USpellMenuWidgetController::SpellGlobeSelected(const FGameplayTag& AbilityT
 		// 능력 사양에서 상태를 가져옴.
 		AbilityStatus = GetAuraASC()->GetStatusFromSpec(*AbilitySpec);
 	}
+	
+	SelectedAbility.Ability = AbilityTag;
+	SelectedAbility.Status = AbilityStatus;
 
 	// 버튼 활성화 여부 결정.
 	bool bEnableSpendPoints = false;
