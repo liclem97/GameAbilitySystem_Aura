@@ -186,6 +186,8 @@ void USpellMenuWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTa
 
 	// 장비 대기 상태 종료를 알리는 델리게이트 브로드캐스트.
 	StopWaitingForEquipDelegate.Broadcast(AbilityInfo->FindAbilityInfoForTag(AbilityTag).AbilityType);
+	SpellGlobeReassignedDelegate.Broadcast(AbilityTag);
+	GlobeDeselect();
 }
 
 // 능력 상태와 스펠 포인트에 따라 장비 및 스펠 포인트 버튼을 활성화할지 결정하는 함수.
