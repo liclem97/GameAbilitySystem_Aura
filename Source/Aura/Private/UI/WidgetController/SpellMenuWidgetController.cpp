@@ -63,6 +63,14 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 // 해당 태그에 맞춰 버튼 활성화 여부를 결정한 후 델리게이트를 통해 브로드캐스트하는 함수.
 void USpellMenuWidgetController::SpellGlobeSelected(const FGameplayTag& AbilityTag)
 {	
+	if (bWaitingForEquipSelection)
+	{
+		// 셀렉팅 애니메이션 멈추기 델리게이트
+		const FGameplayTag SelectedAbilityType = AbilityInfo->FindAbilityInfoForTag(SelectedAbility.Ability).AbilityType;
+		StopWaitingForEquipDelegate.Broadcast(SelectedAbilityType);
+		bWaitingForEquipSelection = false;
+	}	
+
 	// 현재 선택된 AbilityTag에 따라 능력 상태를 결정.
 	const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
 	const int32 SpellPoints = GetAuraPS()->GetSpellPoints();
@@ -107,11 +115,26 @@ void USpellMenuWidgetController::SpendPointButtonPressed()
 }
 
 void USpellMenuWidgetController::GlobeDeselect()
-{
+{	
+	if (bWaitingForEquipSelection)
+	{
+		const FGameplayTag SelectedAbilityType = AbilityInfo->FindAbilityInfoForTag(SelectedAbility.Ability).AbilityType;
+		StopWaitingForEquipDelegate.Broadcast(SelectedAbilityType);
+		bWaitingForEquipSelection = false;
+	}
+
 	SelectedAbility.Ability = FAuraGameplayTags::Get().Abilities_None;
 	SelectedAbility.Status = FAuraGameplayTags::Get().Abilities_Status_Locked;
 
 	SpellGlobeSelectedDelegate.Broadcast(false, false, FString(), FString());
+}
+
+void USpellMenuWidgetController::EquipButtonPressed()
+{
+	const FGameplayTag AbilityType = AbilityInfo->FindAbilityInfoForTag(SelectedAbility.Ability).AbilityType;
+
+	WaitForEquipDelegate.Broadcast(AbilityType);
+	bWaitingForEquipSelection = true;
 }
 
 // 능력 상태와 스펠 포인트에 따라 장비 및 스펠 포인트 버튼을 활성화할지 결정하는 함수.
