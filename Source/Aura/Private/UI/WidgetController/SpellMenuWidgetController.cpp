@@ -42,6 +42,8 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 			}
 		});
 
+	GetAuraASC()->AbilityEquipped.AddUObject(this, &USpellMenuWidgetController::OnAbilityEquipped);
+
 	GetAuraPS()->OnSpellPointsChangedDelegate.AddLambda([this](int32 SpellPoints) 
 		{
 			SpellPointsChanged.Broadcast(SpellPoints);
@@ -129,12 +131,61 @@ void USpellMenuWidgetController::GlobeDeselect()
 	SpellGlobeSelectedDelegate.Broadcast(false, false, FString(), FString());
 }
 
+// 장비 버튼이 눌렸을 때 선택된 능력의 상태와 타입을 처리하고, 선택된 능력이 이미 장착된 경우 슬롯을 설정
 void USpellMenuWidgetController::EquipButtonPressed()
-{
+{	
+	// 선택된 능력의 타입을 가져옴.
 	const FGameplayTag AbilityType = AbilityInfo->FindAbilityInfoForTag(SelectedAbility.Ability).AbilityType;
 
+	// 장착 대기 상태를 알리는 델리게이트 브로드캐스트.
 	WaitForEquipDelegate.Broadcast(AbilityType);
 	bWaitingForEquipSelection = true;
+
+	// 선택된 능력이 이미 장착되어 있는지 확인하고, 장착된 슬롯을 설정.
+	const FGameplayTag SelectedStatus = GetAuraASC()->GetStatusFromAbilityTag(SelectedAbility.Ability);
+	if (SelectedStatus.MatchesTagExact(FAuraGameplayTags::Get().Abilities_Status_Equipped))
+	{
+		SelectedSlot = GetAuraASC()->GetInputTagFromAbilityTag(SelectedAbility.Ability);
+	}
+}
+
+void USpellMenuWidgetController::SpellRowGlobePressed(const FGameplayTag& SlotTag, const FGameplayTag& AbilityType)
+{	
+	// 장비 대기 상태가 아니면 함수 종료.
+	if (!bWaitingForEquipSelection) return;
+
+	// 선택된 능력의 타입이 슬롯의 타입과 일치하는지 확인.
+	// (공격 스킬을 패시브 슬롯에 장착하거나 그 반대의 경우를 방지)
+	const FGameplayTag& SelectedAbilityType = AbilityInfo->FindAbilityInfoForTag(SelectedAbility.Ability).AbilityType;
+	if (!SelectedAbilityType.MatchesTagExact(AbilityType)) return;
+
+	// 서버에 선택된 능력을 해당 슬롯에 장착하도록 요청.
+	GetAuraASC()->ServerEquipAbility(SelectedAbility.Ability, SlotTag);
+}
+
+void USpellMenuWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot)
+{
+	bWaitingForEquipSelection = false;
+
+	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+
+	// 이전 슬롯을 클리어.
+	FAuraAbilityInfo LastSlotInfo;
+	LastSlotInfo.StatusTag = GameplayTags.Abilities_Status_Unlocked;
+	LastSlotInfo.InputTag = PreviousSlot;
+	LastSlotInfo.AbilityTag = GameplayTags.Abilities_None;
+
+	// 이전 슬롯이 유효한 경우 빈 정보 브로드캐스트. (이미 장착된 스펠을 다시 장착할 때만)
+	AbilityInfoDelegate.Broadcast(LastSlotInfo);
+
+	// 새로운 슬롯에 능력 정보 설정.
+	FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
+	Info.StatusTag = Status;
+	Info.InputTag = Slot;
+	AbilityInfoDelegate.Broadcast(Info);
+
+	// 장비 대기 상태 종료를 알리는 델리게이트 브로드캐스트.
+	StopWaitingForEquipDelegate.Broadcast(AbilityInfo->FindAbilityInfoForTag(AbilityTag).AbilityType);
 }
 
 // 능력 상태와 스펠 포인트에 따라 장비 및 스펠 포인트 버튼을 활성화할지 결정하는 함수.
