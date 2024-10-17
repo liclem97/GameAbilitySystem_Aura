@@ -69,11 +69,8 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		// 데미지 값을 설정하여 태그와 함께 발사체에 적용.
 		const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
 
-		for (auto& Pair : DamageTypes)
-		{
-			const float ScaledDamge = Pair.Value.GetValueAtLevel(GetAbilityLevel());
-			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, ScaledDamge);
-		}
+		const float ScaledDamge = Damage.GetValueAtLevel(GetAbilityLevel());
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageType, ScaledDamge);
 
 		Projectile->DamageEffectSpecHandle = SpecHandle;
 
