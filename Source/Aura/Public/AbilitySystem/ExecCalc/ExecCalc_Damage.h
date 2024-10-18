@@ -25,4 +25,8 @@ public:
 	 */
 	virtual void Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
 		FGameplayEffectCustomExecutionOutput& OutExecutionOutPut) const override;
+	void DetermineDebuff(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
+							const FGameplayEffectSpec& Spec,
+							FAggregatorEvaluateParameters& EvalutationParamters,
+							const TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition>& InTagsToDefs) const;
 };
