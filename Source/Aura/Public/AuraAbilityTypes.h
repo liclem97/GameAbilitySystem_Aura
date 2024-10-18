@@ -66,6 +66,7 @@ public:
 	void SetDebuffDamage(float InDamage) { DebuffDamage = InDamage; }
 	void SetDebuffDuration(float InDuration) { DebuffDuration = InDuration; }
 	void SetDebuffFrequency(float InFrequency) { DebuffFrequency = InFrequency; }
+	void SetDamageType(TSharedPtr<FGameplayTag> InDamageType) { DamageType = InDamageType; }
 
 	/** 직렬화에 사용된 실제 구조를 반환합니다. 하위 클래스는 이 구조를 재정의해야 합니다! */
 	virtual UScriptStruct* GetScriptStruct() const
