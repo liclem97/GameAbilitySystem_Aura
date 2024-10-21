@@ -155,7 +155,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
 
-	if (Props.TargetCharacter->Implements<UCombatInterface>() && ICombatInterFace::Execute_IsDead(Props.TargetCharacter)) return;
+	if (Props.TargetCharacter->Implements<UCombatInterface>() && ICombatInterface::Execute_IsDead(Props.TargetCharacter)) return;
 
 	// Health나 Mana가 변경될 때 실행.
 	// GameplayEffec가 적용될 때 Health와 Mana가 Max를 넘지 않도록 설정.
