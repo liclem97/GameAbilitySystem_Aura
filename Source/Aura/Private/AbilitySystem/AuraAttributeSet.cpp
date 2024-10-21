@@ -6,6 +6,7 @@
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AuraAbilityTypes.h"
 #include "AuraGameplayTags.h"
 #include "AuraLogChannels.h"
 #include "GameFramework/Character.h"
@@ -249,7 +250,7 @@ void UAuraAttributeSet::Debuff(const FEffectProperties& Props)
 	// 디버프 피해 설정.
 	const int32 Index = Effect->Modifiers.Num();
 	Effect->Modifiers.Add(FGameplayModifierInfo());
-	FGameplayModifierInfo ModifierInfo = Effect->Modifiers[Index];
+	FGameplayModifierInfo& ModifierInfo = Effect->Modifiers[Index];
 	ModifierInfo.ModifierMagnitude = FScalableFloat(DebuffDamage);
 	ModifierInfo.ModifierOp = EGameplayModOp::Additive;
 	ModifierInfo.Attribute = UAuraAttributeSet::GetIncomingDamageAttribute();
