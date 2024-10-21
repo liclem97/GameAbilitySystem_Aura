@@ -56,7 +56,7 @@ using TStaticFuncPtr = typename TBaseStaticDelegateInstance<T, FDefaultDelegateU
  * 
  */
 UCLASS()
-class AURA_API UAuraAttributeSet : public UAttributeSet
+class AURA_API : public UAttributeSet
 {
 	GENERATED_BODY()
 
