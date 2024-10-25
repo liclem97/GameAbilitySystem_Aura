@@ -4,6 +4,7 @@
 #include "AbilitySystem/AbilityTasks/TargetDataUnderMouse.h"
 
 #include "AbilitySystemComponent.h"
+#include "Aura/Aura.h"
 
 UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility)
 {
@@ -48,7 +49,7 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 
 	// 마우스 커서 아래의 충돌 정보를 가져온다.
 	FHitResult CursorHit;
-	PC->GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+	PC->GetHitResultUnderCursor(ECC_Target, false, CursorHit);
 
 	// 타겟 데이터를 설정하기 위한 핸들 및 데이터 객체를 생성.
 	FGameplayAbilityTargetDataHandle DataHandle;
