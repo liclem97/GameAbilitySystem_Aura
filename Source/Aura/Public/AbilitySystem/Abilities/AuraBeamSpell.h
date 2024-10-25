@@ -7,6 +7,10 @@
 #include "AuraBeamSpell.generated.h"
 
 /**
+ * UAuraBeamSpell
+ *
+ * 빔 형태의 주문 능력 클래스.
+ * 마우스 입력 처리, 대상 추적, 다중 대상 공격 등의 기능을 제공.
  * 
  */
 UCLASS()
