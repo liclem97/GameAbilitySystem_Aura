@@ -251,12 +251,27 @@ void UAuraAttributeSet::Debuff(const FEffectProperties& Props)
 
 	// 디버프 태그와 스택 설정.
 	FInheritedTagContainer TagContainer = FInheritedTagContainer();
+	const FGameplayTag DebuffTag = GameplayTags.DamageTypesToDebuffs[DamageType];
 	UTargetTagsGameplayEffectComponent& Component = Effect->FindOrAddComponent<UTargetTagsGameplayEffectComponent>();
-	TagContainer.Added.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
-	TagContainer.CombinedTags.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
+	TagContainer.Added.AddTag(DebuffTag);
+	TagContainer.CombinedTags.AddTag(DebuffTag); // 디버프 태그 추가.
+
+	// 디버프 태그가 Stun이면 플레이어의 입력을 막음.
+	if (DebuffTag.MatchesTagExact(GameplayTags.Debuff_Stun))
+	{
+		TagContainer.Added.AddTag(GameplayTags.Player_Block_CursorTrace);
+		TagContainer.Added.AddTag(GameplayTags.Player_Block_InputHeld);
+		TagContainer.Added.AddTag(GameplayTags.Player_Block_InputPressed);
+		TagContainer.Added.AddTag(GameplayTags.Player_Block_InputReleased);
+
+		TagContainer.CombinedTags.AddTag(GameplayTags.Player_Block_CursorTrace);
+		TagContainer.CombinedTags.AddTag(GameplayTags.Player_Block_InputHeld);
+		TagContainer.CombinedTags.AddTag(GameplayTags.Player_Block_InputPressed);
+		TagContainer.CombinedTags.AddTag(GameplayTags.Player_Block_InputReleased);
+	}
+	// 태그 적용.
 	Component.SetAndApplyTargetTagChanges(TagContainer);
-	
-	//Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
+
 	Effect->StackingType = EGameplayEffectStackingType::AggregateBySource;
 	Effect->StackLimitCount = 1;
 
