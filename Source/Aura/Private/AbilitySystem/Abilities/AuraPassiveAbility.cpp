@@ -3,8 +3,8 @@
 
 #include "AbilitySystem/Abilities/AuraPassiveAbility.h"
 
-#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 void UAuraPassiveAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo,	const FGameplayAbilityActivationInfo ActivationInfo,

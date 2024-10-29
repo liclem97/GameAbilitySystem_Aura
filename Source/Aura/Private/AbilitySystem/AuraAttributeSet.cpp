@@ -313,12 +313,19 @@ void UAuraAttributeSet::HandleIncomingXP(const FEffectProperties& Props)
 		const int32 NumLevelUps = NewLevel - CurrentLevel;
 		if (NumLevelUps > 0)
 		{
-			// 레벨업 시 애트리뷰트 포인트와 스펠 포인트 보상을 가져옴.
-			const int32 AttributePointsReward = IPlayerInterface::Execute_GetAttributePointsReward(Props.SourceCharacter, CurrentLevel);
-			const int32 SpellPointsReward = IPlayerInterface::Execute_GetSpellPointsReward(Props.SourceCharacter, CurrentLevel);
-
-			// 레벨 추가, 애트리뷰트 및 스펠 포인트 추가.
+			// 레벨 업.
 			IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter, NumLevelUps);
+
+			int32 AttributePointsReward = 0;
+			int32 SpellPointsReward = 0;
+
+			// 레벨 업을 한번에 많이 할 때의 처리.
+			for (int32 i = 0; i < NumLevelUps; i++)
+			{
+				SpellPointsReward += IPlayerInterface::Execute_GetSpellPointsReward(Props.SourceCharacter, CurrentLevel + i);
+				AttributePointsReward += IPlayerInterface::Execute_GetAttributePointsReward(Props.SourceCharacter, CurrentLevel + i);
+			}
+
 			IPlayerInterface::Execute_AddToAttributePoints(Props.SourceCharacter, AttributePointsReward);
 			IPlayerInterface::Execute_AddToSpellPoints(Props.SourceCharacter, SpellPointsReward);
 
