@@ -16,6 +16,7 @@ class UAuraAbilitySystemComponent;
 class USplineComponent;
 class UDamageTextComponent;
 class AMagicCircle;
+class UNiagaraSystem;
 
 /**
  * 
