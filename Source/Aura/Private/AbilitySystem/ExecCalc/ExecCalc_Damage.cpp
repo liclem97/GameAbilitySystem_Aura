@@ -135,6 +135,10 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 		// SetByCaller로 설정된 데미지 타입의 값을 가져옴
 		float DamageTypeValue = Spec.GetSetByCallerMagnitude(Pair.Key, false);
+		if (DamageTypeValue <= 0.f)
+		{
+			continue;
+		}
 
 		// 타겟의 저항 속성 값을 캡처하고 저항 값을 0~100 사이로 클램핑
 		float Resistance = 0.f;
