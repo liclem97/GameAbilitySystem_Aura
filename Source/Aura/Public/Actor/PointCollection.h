@@ -55,4 +55,8 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<USceneComponent> Pt_10;
+
+	// Arcane Shards가 건물의 천장, 혹은 밑바닥에서 스폰될 경우 조절.
+	UPROPERTY(EditDefaultsOnly)
+	float LocationZValue = 500.f;
 };
