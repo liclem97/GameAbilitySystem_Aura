@@ -10,6 +10,7 @@
 #include "AuraAbilityTypes.h"
 #include "AuraGameplayTags.h"
 #include "Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 
 // MMC_Max~ 클래스 생성자의 매크로 방법.
 struct AuraDamageStatics
@@ -108,6 +109,9 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	// GameplayEffect의 스펙과 태그들을 가져옴
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
+
+	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
+
 	const FGameplayTagContainer* SourceTag = Spec.CapturedSourceTags.GetAggregatedTags();
 	const FGameplayTagContainer* TargetTag = Spec.CapturedTargetTags.GetAggregatedTags();
 	FAggregatorEvaluateParameters EvalutationParamters;
@@ -139,6 +143,31 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 		// 저항에 따라 데미지 감소
 		DamageTypeValue *= (100.f - Resistance) / 100.f;
+
+		// 방사형 피해일 경우 실행
+		if (UAuraAbilitySystemLibrary::IsRadialDamage(EffectContextHandle))
+		{
+			if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(TargetAvatar))
+			{
+				CombatInterface->GetOnDamageSignature().AddLambda([&](float DamageAmount) 
+					{
+						DamageTypeValue = DamageAmount;
+					});
+			}
+			UGameplayStatics::ApplyRadialDamageWithFalloff(
+				TargetAvatar,
+				DamageTypeValue,
+				0.f,
+				UAuraAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle),
+				UAuraAbilitySystemLibrary::GetRadialDamageInnerRadius(EffectContextHandle),
+				UAuraAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle),
+				1.f,
+				UDamageType::StaticClass(),
+				TArray<AActor*>(),
+				SourceAvatar,
+				nullptr);
+		}
+
 		Damage += DamageTypeValue;
 	}
 
@@ -150,7 +179,6 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	const bool bBlocked = FMath::RandRange(1, 100) < TargetBlockChance;
 
 	// 블록 여부를 EffectContextHandle에 설정
-	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
 	UAuraAbilitySystemLibrary::SetIsBlockedHit(EffectContextHandle, bBlocked);
 
 	// 블록이 성공했을 경우 데미지 절반으로 감소
