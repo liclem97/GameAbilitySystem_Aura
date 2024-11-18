@@ -44,7 +44,8 @@ void UMVVM_LoadScreen::NewGameButtonPressed(int32 Slot)
 }
 
 void UMVVM_LoadScreen::SelectSlotButtonPressed(int32 Slot)
-{
+{	
+	SlotSelected.Broadcast();
 	for (const TTuple<int32, UMVVM_LoadSlot*> LoadSlot : LoadSlots)
 	{	
 		if (LoadSlot.Key == Slot) // Select 버튼을 누르면 해당 슬롯의 버튼 비활성화.
