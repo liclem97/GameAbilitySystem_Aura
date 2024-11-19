@@ -91,3 +91,12 @@ void UMVVM_LoadScreen::LoadData()
 		LoadSlot.Value->SetMapName(SaveObject->MapName);
 	}
 }
+
+void UMVVM_LoadScreen::PlayButtonPressed()
+{
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (IsValid(SelectedSlot))
+	{
+		AuraGameMode->TravelToMap(SelectedSlot);
+	}
+}

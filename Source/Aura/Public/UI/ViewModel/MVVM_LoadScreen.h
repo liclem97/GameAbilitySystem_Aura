@@ -37,6 +37,9 @@ public:
 
 	void LoadData();
 
+	UFUNCTION(BlueprintCallable)
+	void PlayButtonPressed();
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UMVVM_LoadSlot> LoadSlotViewModelClass;
 
