@@ -3,6 +3,7 @@
 
 #include "Game/AuraGameModeBase.h"
 
+#include "Game/AuraGameInstance.h"
 #include "Game/LoadScreenSaveGame.h"
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
@@ -58,7 +59,9 @@ void AAuraGameModeBase::TravelToMap(UMVVM_LoadSlot* Slot)
 }
 
 AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
-{
+{	
+	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(GetGameInstance());
+
 	TArray<AActor*> Actors;
 
 	// 월드에 있는 PlayerStart 객체를 Actors 배열에 저장.
@@ -75,7 +78,7 @@ AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 			if (APlayerStart* PlayerStart = Cast<APlayerStart>(Actor))
 			{
 				// 배열의 PlayerStart가 특정 태그를 갖고 있으면 저장 후 반복문 탈출.
-				if (PlayerStart->PlayerStartTag == FName("TheTag"))
+				if (PlayerStart->PlayerStartTag == AuraGameInstance->PlayerStartTag)
 				{
 					SelectedActor = PlayerStart;
 					break;
