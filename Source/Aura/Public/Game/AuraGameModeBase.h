@@ -26,6 +26,8 @@ public:
 	static void DeleteSlot(const FString& SlotName, int32 SlotIndex);
 	void TravelToMap(UMVVM_LoadSlot* Slot);
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+	ULoadScreenSaveGame* RetrieveInGameSaveData();
+	void SaveInGameProgressData(ULoadScreenSaveGame* SaveObject);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Character Class Defaults")
 	TObjectPtr<UCharacterClassInfo> CharacterClassInfo;
