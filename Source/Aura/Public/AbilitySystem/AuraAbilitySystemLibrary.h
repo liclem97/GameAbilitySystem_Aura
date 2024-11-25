@@ -14,6 +14,7 @@ class UCharacterClassInfo;
 class USpellMenuWidgetController;
 class UAbilityInfo;
 struct FWidgetControllerParams;
+class ULoadScreenSaveGame;
 /**
  * UAuraAbilitySystemLibrary 클래스
  * 
@@ -48,6 +49,9 @@ public:
 	/** 스폰되는 Pawn의 캐릭터 클래스를 설정한다. */
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary | CharacterClassDefaults")
 	static void InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary | CharacterClassDefaults")
+	static void InitializeDefaultAttributesFromSaveData(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ULoadScreenSaveGame* SaveGame);
 
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary | CharacterClassDefaults")
 	static void GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass);
