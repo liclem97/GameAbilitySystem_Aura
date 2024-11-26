@@ -28,6 +28,7 @@ public:
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 	ULoadScreenSaveGame* RetrieveInGameSaveData();
 	void SaveInGameProgressData(ULoadScreenSaveGame* SaveObject);
+	void SaveWorldState();
 
 	UPROPERTY(EditDefaultsOnly, Category = "Character Class Defaults")
 	TObjectPtr<UCharacterClassInfo> CharacterClassInfo;

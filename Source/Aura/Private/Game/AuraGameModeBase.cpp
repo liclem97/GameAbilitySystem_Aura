@@ -114,6 +114,14 @@ void AAuraGameModeBase::SaveInGameProgressData(ULoadScreenSaveGame* SaveObject)
 	UGameplayStatics::SaveGameToSlot(SaveObject, InGameLoadSlotName, InGameLoadSlotIndex);
 }
 
+void AAuraGameModeBase::SaveWorldState()
+{
+	//ULoadScreenSaveGame* SaveObject = RetrieveInGameSaveData();
+	//if (!IsValid(SaveObject)) return;
+	//SaveObject->SaveActors.Append(SaveActors);
+	//SaveInGameProgressData(SaveObject);
+}
+
 void AAuraGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
