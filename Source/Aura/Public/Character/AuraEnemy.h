@@ -55,6 +55,8 @@ public:
 	virtual AActor* GetCombatTarget_Implementation() const override;
 	/** end Combat Interface */
 
+	void SetLevel(int32 InLevel) { Level = InLevel; }
+
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnHealthChanged;
 
