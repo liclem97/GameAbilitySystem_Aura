@@ -102,10 +102,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup Movement")
 	FVector InitialLocation;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	FVector CalculatedLocation;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	FRotator CalculatedRotation;
 
 private:
