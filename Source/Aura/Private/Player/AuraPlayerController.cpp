@@ -6,6 +6,7 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Actor/MagicCircle.h"
+#include "Aura/Aura.h"
 #include "AuraGameplayTags.h"
 #include "Components/DecalComponent.h"
 #include "Components/SplineComponent.h"
@@ -168,12 +169,12 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 		if (IsValid(ThisActor))
 		{
 			TargetingStatus = ThisActor->Implements<UEnemyInterface>() ? ETargetingStatus::TargetingEnemy : ETargetingStatus::TargetingNonEnemy;
-			bAutoRunning = false;
 		}	
 		else
 		{
 			TargetingStatus = ETargetingStatus::NotTargeting;
 		}
+		bAutoRunning = false;
 	}	
 	if (GetASC()) GetASC()->AbilityInputTagPressed(InputTag);
 }
