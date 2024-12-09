@@ -66,4 +66,16 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void SaveProgress(const FName& CheckpointTag);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetPlayerCameraTurn(float InTurn);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetPlayerCameraZoomOut(float InZoom);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetPlayerCameraToOrigin();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetPlayerCameraZoomOrigin();
 };

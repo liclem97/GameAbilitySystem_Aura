@@ -42,6 +42,8 @@ public:
 	virtual void ShowMagicCircle_Implementation(UMaterialInterface* DecalMaterial) override;
 	virtual void HideMagicCircle_Implementation() override;
 	virtual void SaveProgress_Implementation(const FName& CheckpointTag) override;
+	//virtual void PlayerCameraTurnEvent(float InTurn);
+	//virtual void PlayerCameraZoomOutEvent(float InZoom);
 	/** end Player Interface */
 
 	/** Combat Interface */
@@ -57,15 +59,15 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TObjectPtr<USpringArmComponent> CameraBoom;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TObjectPtr<UCameraComponent> TopDownCameraComponent;
+
 private:
 	virtual void InitAbilityActorInfo() override;
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastLevelUpParticles() const;
-
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UCameraComponent> TopDownCameraComponent;
-
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<USpringArmComponent> CameraBoom;
 };
