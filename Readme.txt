@@ -17,4 +17,4 @@ UE의 게임어빌리티 시스템을 이용하여 만든 Top-down RPG게임
 https://youtu.be/sOcCO9benO4
 
 [참고]
-UDemy - Unreal Engine 5 - Gameplay Ability System - Top Down RPG
+Unreal Engine 5 - Gameplay Ability System - Top Down RPG
